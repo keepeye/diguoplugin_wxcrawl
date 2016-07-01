@@ -19,7 +19,7 @@
         .btn {padding:0.8em 2em;background: #00AEEF;color:#fff;border:none;border-radius: 5px;}
         .btn:hover {background: #20b6ef;cursor: pointer;}
     </style>
-    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/1.11.3/jquery.min.js"></script>
 </head>
 <body>
     <div class="container pd10">
