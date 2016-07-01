@@ -48,48 +48,56 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     if (!$m) {
         ajax_fail('采集失败,正文匹配失败');
     }
-    $content = trim($m[1]);
+    $r['newstext'] = trim($m[1]);
     //清除a链接
     if (isset($postData['filter_tag_a']) && $postData['filter_tag_a'] > 0) {
-        $content = preg_replace('#<a .*?>(.*?)</a>#is','${1}',$content);
+        $r['newstext'] = preg_replace('#<a .*?>(.*?)</a>#is','${1}',$r['newstext']);
     }
     //清除音频标签
     if (isset($postData['filter_tag_mpvoice']) && $postData['filter_tag_mpvoice'] > 0) {
-        $content = preg_replace('#<mpvoice.*?</mpvoice>#is','',$content);
+        $r['newstext'] = preg_replace('#<mpvoice.*?</mpvoice>#is','',$r['newstext']);
     }
     //清除音乐标签
     if (isset($postData['filter_tag_qqmusic']) && $postData['filter_tag_qqmusic'] > 0) {
-        $content = preg_replace('#<qqmusic.*?</qqmusic>#is','',$content);
+        $r['newstext'] = preg_replace('#<qqmusic.*?</qqmusic>#is','',$r['newstext']);
     }
     //清除iframe标签
     if (isset($postData['filter_tag_iframe']) && $postData['filter_tag_iframe'] > 0) {
-        $content = preg_replace('#<iframe.*?</iframe>#is','',$content);
+        $r['newstext'] = preg_replace('#<iframe.*?</iframe>#is','',$r['newstext']);
     }
 
     //下载图片到本地
     if (isset($postData['after_downimg']) && $postData['after_downimg'] > 0) {
-        $content = downimg($content);
+        require __DIR__.'/Downimg.php';
+        //自动提取缩略图
+        if (isset($postData['autopic']) && $postData['autopic'] > 0) {
+            $w = isset($postData['autopic_w']) ? $postData['autopic_w'] : '120';
+            $h = isset($postData['autopic_h']) ? $postData['autopic_h'] : '80';
+            $downimg = new Downimg($r['newstext'],$postData['autopic'],$w,$h);
+        } else {
+            $downimg = new Downimg($r['newstext']);
+        }
+        $downimg->handle();
+        $r['newstext'] = $downimg->newstext;
+        $r['titlepic'] = $downimg->titlepic;
     }
 
-    //缩略图处理
-    if (isset($postData['autopic']) && $postData['autopic'] > 0) {
-        $w = isset($postData['autopic_w']) ? $postData['autopic_w'] : '120';
-        $h = isset($postData['autopic_h']) ? $postData['autopic_h'] : '80';
-        $r['titlepic'] = autotitlepic($content,$w,$h);
-    }
     //清除data属性
     if (isset($postData['filter_attr_data']) && $postData['filter_attr_data'] > 0) {
-        $content = preg_replace('#data-.+?=.+?[\'"]#is','',$content);
+        $r['newstext'] = preg_replace('#\sdata-.+?=\s*".*?"#is','',$r['newstext']);
     }
     //清除class属性
     if (isset($postData['filter_attr_class']) && $postData['filter_attr_class'] > 0) {
-        $content = preg_replace('#class\s*=.+?[\'"]#is','',$content);
+        $r['newstext'] = preg_replace('#\sclass\s*=\s*.*?"#is','',$r['newstext']);
     }
     //清除style属性
     if (isset($postData['filter_attr_style']) && $postData['filter_attr_style'] > 0) {
-        $content = preg_replace('#style\s*=.+?[\'"]#is','',$content);
+        $r['newstext'] = preg_replace('#\sstyle\s*=\s*".*?"#is','',$r['newstext']);
     }
-    $r['newstext'] = $content;
+    //section转换
+    $r['newstext'] = preg_replace('#<section.*?>\s*<section.*?>#is','<section>',$r['newstext']);
+    $r['newstext'] = preg_replace('#</section>\s*</section>#is','</section>',$r['newstext']);
+    $r['newstext'] = preg_replace('#<section>(.+?)</section>#is','<p>${1}</p>',$r['newstext']);
     //发布参数
     $publish = isset($postData['publish']) ? $postData['publish'] : array();
     //已审核

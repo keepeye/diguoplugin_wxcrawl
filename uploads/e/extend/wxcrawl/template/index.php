@@ -58,7 +58,7 @@
                         <label>处理:</label>
                         <input type="checkbox" name="after_downimg" value="1" checked>下载远程图片
                         <div class="pd10">
-                            <input type="checkbox" name="autopic" value="1" >提取正文第一张图作为缩略图,
+                            提取正文第 <input type="text" name="autopic" value="0" > 张图作为缩略图,
                             宽度:<input type="text" name="autopic_w" value="120" >
                             高度:<input type="text" name="autopic_h" value="80" > 必须勾选下载图片到本地选项
                         </div>
