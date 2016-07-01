@@ -62,6 +62,10 @@
                             宽度:<input type="text" name="autopic_w" value="120" >
                             高度:<input type="text" name="autopic_h" value="80" > 必须勾选下载图片到本地选项
                         </div>
+                        <div>
+                            <input type="checkbox" name="auto_keywords" value="1" checked>自动提取关键词
+                            <input type="checkbox" name="auto_tags" value="1" checked>关键词同时作为tags
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>发布设置:</label>

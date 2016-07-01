@@ -98,6 +98,30 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     $r['newstext'] = preg_replace('#<section.*?>\s*<section.*?>#is','<section>',$r['newstext']);
     $r['newstext'] = preg_replace('#</section>\s*</section>#is','</section>',$r['newstext']);
     $r['newstext'] = preg_replace('#<section>(.+?)</section>#is','<p>${1}</p>',$r['newstext']);
+    //提取关键词
+    if (isset($postData['auto_keywords']) && $postData['auto_keywords'] == '1') {
+        //用来提取关键词的文本
+        $text = str_repeat($r['title'],10).preg_replace('#(\s|\<.+?\>)#i','',$r['newstext']);
+        require __DIR__.'/pscws4/pscws4.class.php';
+        $pscws = new PSCWS4('utf8');
+        $pscws->set_dict(__DIR__.'/pscws4/dict.utf8.xdb');
+        $pscws->set_rule(__DIR__.'/pscws4/etc/rules.ini');
+        $pscws->send_text($text);
+        $keywords = "";
+        foreach ($pscws->get_tops(3,'n,v') as $word) {
+            if ($keywords == "") {
+                $keywords = $word['word'];
+            } else {
+                $keywords = $keywords.','.$word['word'];
+            }
+        }
+        $r['keyboard'] = $keywords;
+        //提取tags
+        if (isset($postData['auto_tags']) && $postData['auto_tags'] == '1') {
+            $r['infotags'] = $keywords;
+        }
+    }
+
     //发布参数
     $publish = isset($postData['publish']) ? $postData['publish'] : array();
     //已审核
