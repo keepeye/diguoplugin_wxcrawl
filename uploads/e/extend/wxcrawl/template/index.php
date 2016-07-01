@@ -49,7 +49,7 @@
                         <input type="checkbox" name="filter_tag_a" value="1" checked>清除a标签
                         <input type="checkbox" name="filter_tag_mpvoice" value="1" checked>清除音频标签
                         <input type="checkbox" name="filter_tag_qqmusic" value="1" checked>清除音乐标签
-                        <input type="checkbox" name="filter_tag_iframe" value="1" checked>清除iframe
+                        <input type="checkbox" name="filter_tag_iframe" value="1" checked>清除视频等iframe
                         <input type="checkbox" name="filter_attr_data" value="1" checked>清除data属性
                         <input type="checkbox" name="filter_attr_class" value="1" checked>清除class属性
                         <input type="checkbox" name="filter_attr_style" value="1">清除内联样式
@@ -63,8 +63,8 @@
                             高度:<input type="text" name="autopic_h" value="80" > 必须勾选下载图片到本地选项
                         </div>
                         <div>
-                            <input type="checkbox" name="auto_keywords" value="1" checked>自动提取关键词
-                            <input type="checkbox" name="auto_tags" value="1" checked>关键词同时作为tags
+                            <input type="checkbox" name="auto_keywords" value="1" >自动提取关键词
+                            <input type="checkbox" name="auto_tags" value="1" >关键词同时作为tags
                         </div>
                     </div>
                     <div class="form-group">
@@ -84,6 +84,7 @@
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn">采 集</button>
+                        <p id="doing" style="display: none">采集中,请不要离开...</p>
                     </div>
                 </form>
 
@@ -100,6 +101,7 @@
                 var url = $(this).attr('action');
                 var type = $(this).attr('method');
                 var data = $(this).serialize();
+                $("#doing").css('display','block');
                 $.ajax({
                     url : url,
                     type : type,
@@ -107,6 +109,7 @@
                     data: data,
                     error : function(){alert('请求失败,请重试')},
                     success : function(res){
+                        $("#doing").css('display','none');
                         alert(res.message);
                     }
                 })

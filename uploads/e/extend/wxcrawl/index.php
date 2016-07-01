@@ -81,7 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
         $r['newstext'] = $downimg->newstext;
         $r['titlepic'] = $downimg->titlepic;
     }
-
+    //section转换
+    $r['newstext'] = str_replace(array('<section','</section>'),array('<p','</p>'),$r['newstext']);
+//    $r['newstext'] = preg_replace('#(\<\/section>)+#is','</section>',$r['newstext']);
+//    $r['newstext'] = preg_replace('#\<section[^>]*\>(.+?)\<\/section\>#is','<p>${1}</p>',$r['newstext']);
+    
     //清除data属性
     if (isset($postData['filter_attr_data']) && $postData['filter_attr_data'] > 0) {
         $r['newstext'] = preg_replace('#\sdata-.+?=\s*".*?"#is','',$r['newstext']);
@@ -94,10 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     if (isset($postData['filter_attr_style']) && $postData['filter_attr_style'] > 0) {
         $r['newstext'] = preg_replace('#\sstyle\s*=\s*".*?"#is','',$r['newstext']);
     }
-    //section转换
-    $r['newstext'] = preg_replace('#<section.*?>\s*<section.*?>#is','<section>',$r['newstext']);
-    $r['newstext'] = preg_replace('#</section>\s*</section>#is','</section>',$r['newstext']);
-    $r['newstext'] = preg_replace('#<section>(.+?)</section>#is','<p>${1}</p>',$r['newstext']);
+
     //提取关键词
     if (isset($postData['auto_keywords']) && $postData['auto_keywords'] == '1') {
         //用来提取关键词的文本

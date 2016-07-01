@@ -64,7 +64,6 @@ class Downimg
         if (!$res) {
             return $imgstr;//下载失败
         }
-
         $filename = md5(uniqid(microtime()));
         $r = array();
         $r['type'] = 1;
